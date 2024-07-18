@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Funds Deposit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: lightsteelblue;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display:block
+            ;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bolder;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="submit"] {
+            width: 90%;
+            padding: 10px;
+            border: 1px solid black;
+            border-radius: 10px;
+            font-weight: bolder;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Funds Deposit</h1>
+        <form id="escrowForm">
+            <div class="form-group">
+                <label for="account_name">Account Holder Name:</label>
+                <input type="text" id="account_name" name="account_name" required>
+            </div>
+            <div class="form-group">
+                <label for="pan_no">PAN No:</label>
+                <input type="text" id="pan_no" name="pan_no" required>
+            </div>
+            <div class="form-group">
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob" required>
+            </div>
+            <div class="form-group">
+                <label for="bank_account_number">Bank Account Number:</label>
+                <input type="text" id="bank_account_number" name="bank_account_number" required>
+            </div>
+            <div class="form-group">
+                <label for="bank_name">Bank Name:</label>
+                <input type="text" id="bank_name" name="bank_name" required>
+            </div>
+            <div class="form-group">
+                <label for="ifsc_code">IFSC Code:</label>
+                <input type="text" id="ifsc_code" name="ifsc_code" required>
+            </div>
+            <input type="submit" value="Deposit">
+        </form>
+        <div id="result"></div>
+        <a href="/view_lc_applications_page" class="back-button">Back to Applications</a>
+    </div>
+
+    <script>
+        document.getElementById('escrowForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const data = {
+                account_name: formData.get('account_name'),
+                pan_no: formData.get('pan_no'),
+                dob: formData.get('dob'),
+                bank_account_number: formData.get('bank_account_number'),
+                bank_name: formData.get('bank_name'),
+                ifsc_code: formData.get('ifsc_code')
+            };
+
+            fetch('http://127.0.0.1:5000/deposit_funds', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                if (data.message === 'Funds deposited successfully') {
+                    resultDiv.className = 'success';
+                } else {
+                    resultDiv.className = 'error';
+                }
+                resultDiv.innerText = data.message;
+            })
+            .catch(error => {
+                document.getElementById('result').className = 'error';
+                document.getElementById('result').innerText = 'Error: ' + error;
+            });
+        });
+    </script>
+</body>
+</html>

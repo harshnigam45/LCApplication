@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LC Applications</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eae7dc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .navbar {
+            width: 100%;
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            box-sizing: border-box;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .navbar button {
+            /* float: right; */
+            background-color: crimson;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .navbar button:hover {
+            background-color: #b22222;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        td.status-applied {
+            background-color: #f0ad4e;
+            color: white;
+        }
+
+        td.status-approved {
+            background-color: #5cb85c;
+            color: white;
+        }
+
+        td.status-rejected {
+            background-color: #d9534f;
+            color: white;
+        }
+
+        .back-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 20px 0;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .back-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="#">Bank Name</a>
+    </div>
+
+    <div class="container">
+        <h1>LC Applications</h1>
+        <table id="applicationsTable">
+            <thead>
+                <tr>
+                    <th>Application ID</th>
+                    <th>Applicant Name</th>
+                    <th>Amount</th>
+                    <th>Currency</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- LC applications will be populated here by JavaScript -->
+            </tbody>
+        </table>
+        <button class="back-button" onclick="goBack()">Back to Main Page</button>
+    </div>
+
+    <script>
+        function fetchApplications() {
+            fetch('http://127.0.0.1:5000/get_lc_applications')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('applicationsTable').getElementsByTagName('tbody')[0];
+                tableBody.innerHTML = ''; // Clear existing rows
+                data.forEach(application => {
+                    const row = tableBody.insertRow();
+
+                    const cellId = row.insertCell(0);
+                    const cellName = row.insertCell(1);
+                    const cellAmount = row.insertCell(2);
+                    const cellCurrency = row.insertCell(3);
+                    const cellStatus = row.insertCell(4);
+                    const cellActions = row.insertCell(5);
+
+                    cellId.textContent = application.application_id;
+                    cellName.textContent = application.applicant_name;
+                    cellAmount.textContent = application.amount;
+                    cellCurrency.textContent = application.currency;
+                    cellStatus.textContent = application.status;
+                    cellStatus.className = `status-${application.status.toLowerCase()}`;
+
+                    const withdrawButton = document.createElement('button');
+                    withdrawButton.textContent = 'Withdraw';
+                    withdrawButton.onclick = function() {
+                        withdrawApplication(application.application_id);
+                    };
+                    cellActions.appendChild(withdrawButton);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function withdrawApplication(applicationId) {
+            fetch(`http://127.0.0.1:5000/delete_lc_application?id=${applicationId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                fetchApplications(); // Refresh the list after deletion
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function goBack() {
+            window.location.href = '/';
+        }
+
+        // Initial fetch of applications
+        fetchApplications();
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Seller Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eae7dc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            width: 100%;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid black;
+            border-radius: 10px;
+            font-weight: bolder;
+            border-color: black;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid black;
+            border-radius: 10px;
+            font-weight: bolder;
+            border-color: black;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Seller Login</h2>
+        <input type="text" id="sellerApplicationId" placeholder="Enter Application ID">
+        <button onclick="loginAsSeller()">Login</button>
+    </div>
+
+    <script>
+        function loginAsSeller() {
+            const applicationId = document.getElementById('sellerApplicationId').value;
+            window.location.href = `/seller_dashboard?application_id=${applicationId}`;
+        }
+    </script>
+</body>
+</html>

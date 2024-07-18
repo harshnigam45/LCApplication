@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LC Application Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eae7dc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .navbar {
+            width: 100%;
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            box-sizing: border-box;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .navbar button {
+            background-color: crimson;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .navbar button:hover {
+            background-color: #b22222;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bolder;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="submit"],
+        button,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid black;
+            border-radius: 10px;
+            font-weight: bolder;
+            border-color: black;
+        }
+
+        input[type="submit"],
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        input[type="submit"]:hover,
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="#">Bank Name</a>
+        <div>
+            <button type="button" id="viewAccountDetails" style="background-color: crimson">View Account Details</button>
+            <button type="button" id="viewApplications" style="background-color: rgb(79, 82, 164);">View LC Applications</button>
+            <button type="button" id="viewSellerDashboard" style="background-color: rgb(231, 231, 24);color:#333">Seller Dashboard</button>
+            <button type="button" id="viewBuyerDashboard" style="background-color: rgb(0, 255, 110); color:#333">Buyer Dashboard</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="container">
+            <h2>Applicant Details</h2>
+            <form id="lcForm">
+                <div class="form-group">
+                    <label for="applicant_country">Country:</label>
+                    <select id="applicant_country" name="applicant_country" required>
+                        <option value="" style="font-weight: bolder;">Select</option>
+                        <option value="USA" data-currency="USD">USA</option>
+                        <option value="India" data-currency="INR">India</option>
+                        <option value="UK" data-currency="GBP">UK</option>
+                        <option value="Canada" data-currency="CAD">Canada</option>
+                        <option value="Australia" data-currency="AUD">Australia</option>
+                        <option value="Germany" data-currency="EUR">Germany</option>
+                        <option value="France" data-currency="EUR">France</option>
+                        <option value="Japan" data-currency="JPY">Japan</option>
+                        <option value="China" data-currency="CNY">China</option>
+                        <option value="Brazil" data-currency="BRL">Brazil</option>
+                        <option value="Russia" data-currency="RUB">Russia</option>
+                        <option value="South Africa" data-currency="ZAR">South Africa</option>
+                        <option value="Mexico" data-currency="MXN">Mexico</option>
+                        <option value="Italy" data-currency="EUR">Italy</option>
+                        <option value="Spain" data-currency="EUR">Spain</option>
+                        <option value="Netherlands" data-currency="EUR">Netherlands</option>
+                        <option value="South Korea" data-currency="KRW">South Korea</option>
+                        <option value="Singapore" data-currency="SGD">Singapore</option>
+                        <option value="Saudi Arabia" data-currency="SAR">Saudi Arabia</option>
+                        <option value="UAE" data-currency="AED">UAE</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="applicant_name">Name:</label>
+                    <input type="text" id="applicant_name" name="applicant_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="applicant_bank_account">Bank Account Number:</label>
+                    <input type="text" id="applicant_bank_account" name="applicant_bank_account" required>
+                </div>
+                <div class="form-group">
+                    <label for="applicant_pan">PAN Number:</label>
+                    <input type="text" id="applicant_pan" name="applicant_pan" required>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <input type="number" id="amount" name="amount" required>
+                    <input type="hidden" id="currency" name="currency">
+                </div>
+                <div class="form-group">
+                    <label for="applicant_bank_name">Bank Name:</label>
+                    <input type="text" id="applicant_bank_name" name="applicant_bank_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="purpose">Purpose:</label>
+                    <input type="text" id="purpose" name="purpose" required>
+                </div>
+                <div class="form-group">
+                    <label for="applicant_mobile">Mobile Number:</label>
+                    <input type="text" id="applicant_mobile" name="applicant_mobile" required>
+                </div>
+                <button type="button" id="sendOtp">Send OTP</button>
+                <div class="form-group">
+                    <label for="otp">OTP:</label>
+                    <input type="text" id="otp" name="otp" required>
+                    <button type="button" id="verifyOtp">Verify OTP</button>
+                </div>
+                <div id="otpResult"></div>
+            </form>
+        </div>
+
+        <div class="container">
+            <h2>Beneficiary Details</h2>
+            <form id="beneficiaryForm">
+                <div class="form-group">
+                    <label for="beneficiary_country">Country:</label>
+                    <select id="beneficiary_country" name="beneficiary_country" required>
+                        <option value="" style="font-weight: bolder;">Select</option>
+                        <option value="USA" data-currency="USD">USA</option>
+                        <option value="India" data-currency="INR">India</option>
+                        <option value="UK" data-currency="GBP">UK</option>
+                        <option value="Canada" data-currency="CAD">Canada</option>
+                        <option value="Australia" data-currency="AUD">Australia</option>
+                        <option value="Germany" data-currency="EUR">Germany</option>
+                        <option value="France" data-currency="EUR">France</option>
+                        <option value="Japan" data-currency="JPY">Japan</option>
+                        <option value="China" data-currency="CNY">China</option>
+                        <option value="Brazil" data-currency="BRL">Brazil</option>
+                        <option value="Russia" data-currency="RUB">Russia</option>
+                        <option value="South Africa" data-currency="ZAR">South Africa</option>
+                        <option value="Mexico" data-currency="MXN">Mexico</option>
+                        <option value="Italy" data-currency="EUR">Italy</option>
+                        <option value="Spain" data-currency="EUR">Spain</option>
+                        <option value="Netherlands" data-currency="EUR">Netherlands</option>
+                        <option value="South Korea" data-currency="KRW">South Korea</option>
+                        <option value="Singapore" data-currency="SGD">Singapore</option>
+                        <option value="Saudi Arabia" data-currency="SAR">Saudi Arabia</option>
+                        <option value="UAE" data-currency="AED">UAE</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="beneficiary_name">Name:</label>
+                    <input type="text" id="beneficiary_name" name="beneficiary_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="beneficiary_bank_account">Bank Account Number:</label>
+                    <input type="text" id="beneficiary_bank_account" name="beneficiary_bank_account" required>
+                </div>
+                <div class="form-group">
+                    <label for="beneficiary_bank_name">Bank Name:</label>
+                    <input type="text" id="beneficiary_bank_name" name="beneficiary_bank_name" required>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="container" id="submitContainer">
+        <form id="finalForm">
+            <input type="submit" value="Generate Application ID">
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('applicant_country').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const currency = selectedOption.getAttribute('data-currency');
+            const amountInput = document.getElementById('amount');
+            amountInput.placeholder = `Amount (${currency})`;
+            document.getElementById('currency').value = currency; // Set hidden currency field
+        });
+
+        document.getElementById('sendOtp').addEventListener('click', function() {
+            const applicantForm = new FormData(document.getElementById('lcForm'));
+            const beneficiaryForm = new FormData(document.getElementById('beneficiaryForm'));
+
+            const applicantFieldsFilled = ['applicant_country', 'applicant_name', 'applicant_bank_account', 'applicant_pan', 'amount', 'applicant_bank_name', 'purpose', 'applicant_mobile']
+                .every(id => applicantForm.get(id));
+            const beneficiaryFieldsFilled = ['beneficiary_country', 'beneficiary_name', 'beneficiary_bank_account', 'beneficiary_bank_name']
+                .every(id => beneficiaryForm.get(id));
+
+            if (!applicantFieldsFilled || !beneficiaryFieldsFilled) {
+                alert('Please fill all the details of applicant and beneficiary.');
+                return;
+            }
+
+            const mobileNumber = document.getElementById('applicant_mobile').value;
+            fetch('http://127.0.0.1:5000/send_otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ mobile_number: mobileNumber })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        document.getElementById('verifyOtp').addEventListener('click', function() {
+            const mobileNumber = document.getElementById('applicant_mobile').value;
+            const otp = document.getElementById('otp').value;
+            fetch('http://127.0.0.1:5000/verify_otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ mobile_number: mobileNumber, otp: otp })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const otpResultDiv = document.getElementById('otpResult');
+                if (data.message === 'Successfully verified') {
+                    otpResultDiv.className = 'success';
+                } else {
+                    otpResultDiv.className = 'error';
+                }
+                otpResultDiv.innerText = data.message;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        document.getElementById('finalForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const applicantForm = new FormData(document.getElementById('lcForm'));
+            const beneficiaryForm = new FormData(document.getElementById('beneficiaryForm'));
+            const data = {
+                applicant_country: applicantForm.get('applicant_country'),
+                applicant_name: applicantForm.get('applicant_name'),
+                applicant_bank_account: applicantForm.get('applicant_bank_account'),
+                applicant_pan: applicantForm.get('applicant_pan'),
+                amount: applicantForm.get('amount'),
+                currency: applicantForm.get('currency'),
+                applicant_bank_name: applicantForm.get('applicant_bank_name'),
+                purpose: applicantForm.get('purpose'),
+                applicant_mobile: applicantForm.get('applicant_mobile'),
+                otp: applicantForm.get('otp'),
+                beneficiary_country: beneficiaryForm.get('beneficiary_country'),
+                beneficiary_name: beneficiaryForm.get('beneficiary_name'),
+                beneficiary_bank_account: beneficiaryForm.get('beneficiary_bank_account'),
+                beneficiary_bank_name: beneficiaryForm.get('beneficiary_bank_name')
+            };
+
+            fetch('http://127.0.0.1:5000/apply_lc', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                if (data.message === 'LC Application created successfully') {
+                    resultDiv.className = 'success';
+                    resultDiv.innerText = `Application ID: ${data.application_id}`;
+                } else {
+                    resultDiv.className = 'error';
+                    resultDiv.innerText = data.message;
+                }
+            })
+            .catch(error => {
+                const resultDiv = document.getElementById('result');
+                resultDiv.className = 'error';
+                resultDiv.innerText = 'Error: ' + error;
+            });
+        });
+
+        document.getElementById('viewAccountDetails').addEventListener('click', function() {
+            window.location.href = '/check_account_balance_page';
+        });
+
+        document.getElementById('viewApplications').addEventListener('click', function() {
+            window.location.href = '/view_lc_applications_page';
+        });
+
+        document.getElementById('viewSellerDashboard').addEventListener('click', function() {
+            window.location.href = '/seller_dashboard';
+        });
+
+        document.getElementById('viewBuyerDashboard').addEventListener('click', function() {
+            window.location.href = '/buyer_dashboard';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Seller Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eae7dc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .navbar {
+            width: 100%;
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            box-sizing: border-box;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .navbar button {
+            /* float: right; */
+            background-color: crimson;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .navbar button:hover {
+            background-color: #b22222;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 50px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4da0c0;
+            color: white;
+        }
+
+        td.status-approved {
+            background-color: #5cb85c;
+            color: white;
+        }
+
+        td.status-pending {
+            background-color: #f0ad4e;
+            color: white;
+        }
+
+        td.status-dispatched {
+            background-color: #5bc0de;
+            color: white;
+        }
+
+        .dispatch-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 20px 0;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .dispatch-button:hover {
+            background-color: #45a049;
+        }
+
+        .form-group {
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bolder;
+        }
+
+        input[type="text"],
+        input[type="submit"],
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid black;
+            border-radius: 10px;
+            font-weight: bolder;
+            border-color: black;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="#">Bank Name</a>
+        <button type="button" onclick="window.location.href='/'">Back to Main Page</button>
+    </div>
+
+    <div class="container">
+        <h1>Seller Dashboard</h1>
+        <div class="form-group">
+            <label for="application_id">Application ID:</label>
+            <input type="text" id="application_id" name="application_id" required>
+        </div>
+        <input type="submit" value="Access Details" id="accessDashboard">
+
+        <table id="lcTable">
+            <thead>
+                <tr>
+                    <th>Application ID</th>
+                    <th>Applicant Name</th>
+                    <th>Amount</th>
+                    <th>Currency</th>
+                    <th>Approval Status</th>
+                    <th>Dispatch Status</th>
+                    <!-- <th>Actions</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- LC application details will be populated here by JavaScript -->
+            </tbody>
+        </table>
+
+        <div class="form-group">
+            <h2>Upload Consignment Documents</h2>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="hidden" id="uploadApplicationId" name="application_id">
+                <!-- <label for="document">Document:</label> -->
+                <input type="file" id="document" name="document" required>
+                <input type="submit" value="Upload Document">
+            </form>
+            <div id="uploadResult"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('accessDashboard').addEventListener('click', function() {
+            const applicationId = document.getElementById('application_id').value;
+            fetch(`http://127.0.0.1:5000/get_lc_application_by_id?application_id=${applicationId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'LC Application not found') {
+                    alert('LC Application not found');
+                    return;
+                }
+
+                document.getElementById('uploadApplicationId').value = applicationId;
+
+                const tableBody = document.getElementById('lcTable').getElementsByTagName('tbody')[0];
+                tableBody.innerHTML = ''; // Clear existing rows
+
+                const row = tableBody.insertRow();
+
+                const cellId = row.insertCell(0);
+                const cellName = row.insertCell(1);
+                const cellAmount = row.insertCell(2);
+                const cellCurrency = row.insertCell(3);
+                const cellApprovalStatus = row.insertCell(4);
+                const cellDispatchStatus = row.insertCell(5);
+                // const cellActions = row.insertCell(6);
+
+                cellId.textContent = data.application_id;
+                cellName.textContent = data.applicant_name;
+                cellAmount.textContent = data.amount;
+                cellCurrency.textContent = data.currency;
+                cellApprovalStatus.textContent = data.approval_status;
+                cellApprovalStatus.className = `status-${data.approval_status.toLowerCase()}`;
+                cellDispatchStatus.textContent = data.dispatch_status;
+                cellDispatchStatus.className = `status-${data.dispatch_status.toLowerCase()}`;
+
+                if (data.approval_status === 'approved' && data.dispatch_status === 'pending') {
+                    const dispatchButton = document.createElement('button');
+                    dispatchButton.textContent = 'Dispatch Goods';
+                    dispatchButton.className = 'dispatch-button';
+                    dispatchButton.onclick = function() {
+                        dispatchGoods(data.application_id);
+                    };
+                    cellActions.appendChild(dispatchButton);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            fetch('http://127.0.0.1:5000/upload_document', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const uploadResultDiv = document.getElementById('uploadResult');
+                if (data.message === 'Document uploaded successfully') {
+                    uploadResultDiv.className = 'success';
+                    uploadResultDiv.innerText = data.message;
+                } else {
+                    uploadResultDiv.className = 'error';
+                    uploadResultDiv.innerText = data.message;
+                }
+            })
+            .catch(error => {
+                const uploadResultDiv = document.getElementById('uploadResult');
+                uploadResultDiv.className = 'error';
+                uploadResultDiv.innerText = 'Error: ' + error;
+            });
+        });
+
+        function dispatchGoods(applicationId) {
+            fetch('http://127.0.0.1:5000/dispatch_goods', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ application_id: applicationId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                fetchApplicationDetails(applicationId); // Refresh the details after dispatching goods
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function fetchApplicationDetails(applicationId) {
+            fetch(`http://127.0.0.1:5000/get_lc_application_by_id?application_id=${applicationId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'LC Application not found') {
+                    alert('LC Application not found');
+                    return;
+                }
+
+                document.getElementById('uploadApplicationId').value = applicationId;
+
+                const tableBody = document.getElementById('lcTable').getElementsByTagName('tbody')[0];
+                tableBody.innerHTML = ''; // Clear existing rows
+
+                const row = tableBody.insertRow();
+
+                const cellId = row.insertCell(0);
+                const cellName = row.insertCell(1);
+                const cellAmount = row.insertCell(2);
+                const cellCurrency = row.insertCell(3);
+                const cellApprovalStatus = row.insertCell(4);
+                const cellDispatchStatus = row.insertCell(5);
+                // const cellActions = row.insertCell(6);
+
+                cellId.textContent = data.application_id;
+                cellName.textContent = data.applicant_name;
+                cellAmount.textContent = data.amount;
+                cellCurrency.textContent = data.currency;
+                cellApprovalStatus.textContent = data.approval_status;
+                cellApprovalStatus.className = `status-${data.approval_status.toLowerCase()}`;
+                cellDispatchStatus.textContent = data.dispatch_status;
+                cellDispatchStatus.className = `status-${data.dispatch_status.toLowerCase()}`;
+
+                if (data.approval_status === 'approved' && data.dispatch_status === 'pending') {
+                    const dispatchButton = document.createElement('button');
+                    dispatchButton.textContent = 'Dispatch Goods';
+                    dispatchButton.className = 'dispatch-button';
+                    dispatchButton.onclick = function() {
+                        dispatchGoods(data.application_id);
+                    };
+                    cellActions.appendChild(dispatchButton);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
